@@ -11,15 +11,16 @@ int printLine() {
 
 //design DAG
 std::string getSolution() {
+    ALOG("start test: print plan.");
     Scheduler scheduler;
     TaskNode* node1_1 = scheduler.addNode(printLine);
-    /*TaskNode* node1_2 = scheduler.addNode(printLine);
+    TaskNode* node1_2 = scheduler.addNode(printLine);
     TaskNode* node1_3 = scheduler.addNode(printLine);
     TaskNode* node1_4 = scheduler.addNode(printLine);
     TaskNode* node1_1_1 = scheduler.addNode(printLine, node1_1);
     TaskNode* node1_1_2 = scheduler.addNode(printLine, node1_1);
     TaskNode* node1_3_1 = scheduler.addNode(printLine, node1_3);
     TaskNode* node1_1_2_1 = scheduler.addNode(printLine, node1_1_2);
-    scheduler.commit();*/
+    scheduler.commit();
     return "done";
 }

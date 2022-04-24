@@ -1,13 +1,16 @@
 #ifndef TASKNODE_INCLUDED
 #define TASKNODE_INCLUDED
 
+#define  LOG_TAG    "testjni"
+#define  ALOG(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+
 #include <jni.h>
 #include <string>
 #include <stdio.h>
 #include <future>
 #include <cmath>
+#include <android/log.h>
 #include "node.cpp"
-
 
 class TaskNode : public Node {
     public:
@@ -33,6 +36,7 @@ class TaskNode : public Node {
             std::packaged_task<int()> task(std::bind(func, args));
             std::future<int> future = task.get_future();
             task();
+            ALOG("Task node execution.");
             return future.get();
         }
 

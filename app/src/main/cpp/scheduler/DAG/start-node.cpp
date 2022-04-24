@@ -2,6 +2,7 @@
 #include <string>
 #include <stdio.h>
 #include "node.cpp"
+#include <android/log.h>
 #include "task-node.cpp"
 
 class StartNode : public Node {

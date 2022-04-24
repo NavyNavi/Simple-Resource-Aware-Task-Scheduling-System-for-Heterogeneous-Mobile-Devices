@@ -5,6 +5,7 @@
 #include <string>
 #include <stdio.h>
 #include <vector>
+#include <android/log.h>
 
 class Node {
     public:
