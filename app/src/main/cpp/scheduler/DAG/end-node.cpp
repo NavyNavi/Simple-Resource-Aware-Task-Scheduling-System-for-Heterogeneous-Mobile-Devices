@@ -1,7 +1,7 @@
 #include <jni.h>
 #include <string>
 #include <stdio.h>
-#include "node.cpp"
+#include "node.h"
 
 class EndNode : Node {
     public:

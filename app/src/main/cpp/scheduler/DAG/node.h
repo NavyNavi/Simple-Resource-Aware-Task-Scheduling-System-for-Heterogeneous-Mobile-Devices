@@ -5,13 +5,12 @@
 #include <string>
 #include <stdio.h>
 #include <vector>
-#include <android/log.h>
 
 class Node {
     public:
         long id;
 
-        int getCriticality() const { return criticality; }
+        const int getCriticality() const { return criticality; }
         virtual int execute() = 0;
         virtual int setCriticality() = 0;
         virtual void cleanup() = 0;

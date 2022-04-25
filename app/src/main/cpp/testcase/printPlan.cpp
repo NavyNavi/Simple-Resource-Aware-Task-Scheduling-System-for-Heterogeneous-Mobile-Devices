@@ -1,8 +1,11 @@
+#define  LOG_TAG    "testjni"
+#define  ALOG(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+
 #include <jni.h>
 #include <string>
 #include <stdio.h>
 #include "../scheduler/scheduler.cpp"
-#include "../scheduler/DAG/task-node.cpp"
+#include "../scheduler/DAG/task-node.h"
 
 //define tasks
 int printLine() {
