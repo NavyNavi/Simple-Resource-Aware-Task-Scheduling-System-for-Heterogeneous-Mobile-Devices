@@ -3,8 +3,7 @@
 
 class TaskNode : public Node {
 public:
-    typedef int (*callback_function)(int);
-    TaskNode(callback_function f, int args, long id);
+    TaskNode(int funcId, int args, long id);
     TaskNode(TaskNode const &node);
 
     TaskNode* getNextNode();
@@ -12,10 +11,11 @@ public:
     int execute();
     int setCriticality();
     void cleanup();
+    std::string serialize();
 
 private:
     std::vector<TaskNode *> next_nodes;
-    callback_function func;
+    int funcId;
     int args;
 };
 

@@ -1,9 +1,7 @@
 class Scheduler {
     public:
-        typedef int (*callback_function)(void);
-
         ~Scheduler();
-        TaskNode* addNode(callback_function func, TaskNode* prev_node = nullptr);
+        TaskNode* addNode(int funcId, TaskNode* prev_node = nullptr);
         void commit();
         void assign();
 

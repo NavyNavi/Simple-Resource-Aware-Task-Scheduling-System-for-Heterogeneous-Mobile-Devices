@@ -68,6 +68,7 @@ public class WiFiDirect extends AppCompatActivity {
     String[] deviceNameArray;
     WifiP2pDevice[] deviceArray;
 
+    String paringSSID;
     String fileName;
     public static boolean transactionDone=false;
 

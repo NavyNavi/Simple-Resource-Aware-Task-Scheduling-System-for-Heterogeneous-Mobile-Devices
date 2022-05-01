@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <string>
+#include <sstream>
 #include <stdio.h>
 #include <future>
 #include <cmath>
@@ -7,8 +8,8 @@
 #include "node.h"
 #include "task-node.h"
 
-TaskNode::TaskNode(callback_function f, int args, long id) {
-    this->func = f;
+TaskNode::TaskNode(int funcId, int args, long id) {
+    this->funcId = funcId;
     this->args = args;
     this->id = id;
 }
@@ -17,7 +18,7 @@ TaskNode::TaskNode(TaskNode const &node) {
     this->id = node.id;
     this->criticality = node.getCriticality();
     this->next_nodes = node.next_nodes;
-    this->func = node.func;
+    this->funcId = node.funcId;
     this->args = node.args;
 }
 
@@ -26,11 +27,12 @@ TaskNode * TaskNode::getNextNode() { return next_nodes.front(); }
 void TaskNode::addNextNode(TaskNode *node) { next_nodes.push_back(node); }
 
 int TaskNode::execute() {
-    std::packaged_task<int()> task(std::bind(func, args));
-    std::future<int> future = task.get_future();
-    task();
+    //std::packaged_task<int()> task(std::bind(funcId, args));
+    //std::future<int> future = task.get_future();
+    //task();
     ALOG("Task node execution.");
-    return future.get();
+    //return future.get();
+    return 1;
 }
 
 int TaskNode::setCriticality(){
@@ -52,4 +54,10 @@ void TaskNode::cleanup(){
         delete edge;
         edge = nullptr;
     }
+}
+
+std::string TaskNode::serialize() {
+    std::ostringstream ss;
+    ss << id << "," << funcId << "," << args;
+    return ss.str();
 }

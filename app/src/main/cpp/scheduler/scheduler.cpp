@@ -14,9 +14,9 @@ Scheduler::~Scheduler() {
     start_node = nullptr;
 }
 
-TaskNode * Scheduler::addNode(callback_function func, TaskNode *prev_node) {
+TaskNode * Scheduler::addNode(int funcId, TaskNode *prev_node) {
     ALOG("Add node.");
-    TaskNode* new_node = new TaskNode(reinterpret_cast<int (*)(int)>(func), 1, idCounter);
+    TaskNode* new_node = new TaskNode(funcId, 1, idCounter);
     idCounter++;
     if (prev_node) {
         prev_node->addNextNode(new_node);
