@@ -2,7 +2,7 @@ class Scheduler {
     public:
         ~Scheduler();
         TaskNode* addNode(int funcId, TaskNode* prev_node = nullptr);
-        void commit();
+        std::string commit();
         void assign();
 
     private:

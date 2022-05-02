@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ActivityMainBinding binding;
+    private ReceiveTask receiver;
+    private SendTask sender;
+
+    public void setSerializedTask(String taskStr){
+        byte[] serializedTask = taskStr.getBytes(StandardCharsets.UTF_8);
+        sender=new SendTask(getApplicationContext(), null);
+        //to do get group addr
+        sender.execute(null,getApplicationContext(),1);
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

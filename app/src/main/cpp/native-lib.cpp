@@ -11,19 +11,12 @@ Java_com_example_myapplication_MainActivity_stringFromJNI(
 }
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_myapplication_MainActivity_printPlan(JNIEnv* env, jobject ) {
+Java_com_example_myapplication_MainActivity_printPlan(JNIEnv* env, jobject jObj) {
     std::string res = getSolution();
-    return env->NewStringUTF(res.c_str());
-}
-
-extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_myapplication_MainActivity_getTask(JNIEnv* env, jobject ) {
-    std::string res = getSolution();
-
-    jclass taskClass = env->FindClass("com/example/myapplication/Task");
-    jmethodID methodId = env->GetMethodID(taskClass, "<init>", "()V");
-    jobject sampleObj = env->NewObject(taskClass, methodId);
-
+    jstring jTask = env->NewStringUTF(res.c_str());
+    jclass taskClass = env->FindClass("com/example/myapplication/MainActivity");
+    jmethodID methodId = env->GetMethodID(taskClass, "setSerializedTask", "(Ljava/lang/String;)V");
+    env->CallVoidMethod(jObj, methodId, jTask);
 
     return env->NewStringUTF(res.c_str());
 }

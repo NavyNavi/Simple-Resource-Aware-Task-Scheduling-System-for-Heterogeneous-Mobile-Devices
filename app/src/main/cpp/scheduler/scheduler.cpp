@@ -26,9 +26,10 @@ TaskNode * Scheduler::addNode(int funcId, TaskNode *prev_node) {
     return new_node;
 }
 
-void Scheduler::commit() {
+std::string Scheduler::commit() {
     currCrit = start_node->setCriticality();
-    this->assign();
+    std::string task = start_node->getNextNode()->serialize();
+    return task;
 }
 
 void Scheduler::assign() {

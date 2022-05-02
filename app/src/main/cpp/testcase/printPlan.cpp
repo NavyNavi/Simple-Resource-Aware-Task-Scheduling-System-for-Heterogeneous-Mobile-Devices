@@ -30,6 +30,6 @@ string getSolution() {
     TaskNode* node1_1_2 = scheduler.addNode(0, node1_1);
     TaskNode* node1_3_1 = scheduler.addNode(0, node1_3);
     TaskNode* node1_1_2_1 = scheduler.addNode(0, node1_1_2);
-    scheduler.commit();
-    return node1_1_2_1->serialize();
+    std::string task = scheduler.commit();
+    return task;
 }

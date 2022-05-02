@@ -69,7 +69,7 @@ public class WiFiDirect extends AppCompatActivity {
     WifiP2pDevice[] deviceArray;
 
     String paringSSID;
-    String fileName;
+    private byte[] SerializedTask;
     public static boolean transactionDone=false;
 
     //for notification handling
@@ -77,24 +77,6 @@ public class WiFiDirect extends AppCompatActivity {
     private int NOTIFICATION_ID = 1;
     private Notification mNotification;
     private NotificationManager mNotificationManager;
-
-    public static boolean copyFile(InputStream inputStream, OutputStream out) {
-        byte[] buf = new byte[1024];
-        int len;
-        try {
-            while ((len = inputStream.read(buf)) != -1) {
-                out.write(buf, 0, len);
-
-            }
-            out.close();
-            inputStream.close();
-        } catch (IOException e) {
-//            Log.d("inside copyFile", e.toString());
-            return false;
-        }
-        return true;
-    }
-
 
     private void exqListener() {
         btnOnOff.setOnClickListener(new View.OnClickListener() {
@@ -149,30 +131,6 @@ public class WiFiDirect extends AppCompatActivity {
             Toast.makeText(this, "please enable location services for this app.", Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
         }
-    }
-
-    public static boolean sendFile(Socket socket, Context context, String fileName) {
-        Log.d("WifiDirect","sending file.");
-        int len;
-        byte[] buf = new byte[1024];
-
-        try {
-            OutputStream outputStream = socket.getOutputStream();
-            ContentResolver cr = context.getContentResolver();
-            InputStream inputStream = null;
-            inputStream = cr.openInputStream(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/D2D/" + fileName)));
-            if (inputStream == null) {
-                throw new FileNotFoundException("can't open input stream: " + "Environment.getExternalStorageDirectory()+\"/D2D/\"" + fileName);
-            }
-            while ((len = inputStream.read(buf)) != -1) {
-                outputStream.write(buf, 0, len);
-            }
-            outputStream.close();
-            inputStream.close();
-        } catch (IOException e) {
-            return false;
-        }
-        return true;
     }
 
     WifiP2pManager.PeerListListener peerListListener=new WifiP2pManager.PeerListListener() {
@@ -239,7 +197,7 @@ public class WiFiDirect extends AppCompatActivity {
             {
                 Log.d("WifiDirect","group formed - host.");
                 connectionStatus.setText("Host");
-                WiFiDirect.sendTask=new SendTask(getApplicationContext());
+                WiFiDirect.sendTask=new SendTask(getApplicationContext(), null);
                 if (wifiP2pInfo.isGroupOwner){
                     WiFiDirect.sendTask.execute(groupOwnerAddress,getApplicationContext(),1);
                 }else{
@@ -259,134 +217,6 @@ public class WiFiDirect extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         unregisterReceiver(mReceiver);
-    }
-
-    class ReceiveTask extends AsyncTask<Object, Void,Void> {
-        Socket socket;
-        ServerSocket serverSocket;
-        String hostAdd;
-        Context context;
-        int ownership;
-
-        public ReceiveTask(Context context){
-            mContext = context;
-            //Get the notification manager
-            mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            createNotification(fileName,"File download initiated",android.R.drawable.stat_sys_download);
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            createNotification(fileName,"File download successful",android.R.drawable.stat_sys_download_done);
-           // msgFlag = 0;
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            super.onProgressUpdate(values);
-            createNotification(fileName,"File download in progress",android.R.drawable.stat_sys_download);
-        }
-
-        @Override
-        protected Void doInBackground(Object... objects) {
-            socket= new Socket();
-            hostAdd=((InetAddress)objects[0]).getHostAddress();
-            context = (Context) objects[1];
-            ownership = (int) objects[2];
-            switch (ownership){
-                case 1:
-                    try {
-                        serverSocket=new ServerSocket(8888);
-                        socket=serverSocket.accept();
-                        receiveFile(socket,fileName);
-                        serverSocket.close();
-                        //CloudFileScreen.hasRequested=false;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case 2:
-                    try {
-                        socket.connect(new InetSocketAddress(hostAdd,8888),500);
-                        receiveFile(socket,fileName);
-                        //CloudFileScreen.hasRequested=false;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-            }
-
-            return null;
-        }
-    }
-
-    class SendTask extends AsyncTask<Object, Void,Void> {
-        Socket socket;
-        ServerSocket serverSocket;
-        String hostAdd;
-        Context context;
-        int ownership;
-
-        public SendTask(Context context){
-            mContext = context;
-            //Get the notification manager
-            mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            createNotification(fileName,"File upload initiated",android.R.drawable.stat_sys_upload);
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            createNotification(fileName,"File upload successful",android.R.drawable.stat_sys_upload_done);
-            //msgFlag = 0;
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            super.onProgressUpdate(values);
-            createNotification(fileName,"File upload in progress",android.R.drawable.stat_sys_upload);
-        }
-
-        @Override
-        protected Void doInBackground(Object... objects) {
-            socket= new Socket();
-            hostAdd=((InetAddress)objects[0]).getHostAddress();
-            context = (Context) objects[1];
-            ownership = (int) objects[2];
-            switch (ownership){
-                case 1:
-                    try {
-                        serverSocket=new ServerSocket(8888);
-                        socket=serverSocket.accept();
-                        sendFile(socket,context,fileName);
-                        serverSocket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case 2:
-                    try {
-                        socket.connect(new InetSocketAddress(hostAdd,8888),500);
-                        sendFile(socket,context,fileName);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-            }
-
-            return null;
-        }
     }
 
     @Override
@@ -423,32 +253,6 @@ public class WiFiDirect extends AppCompatActivity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
     }
 
-    public static boolean receiveFile(Socket socket,String fileName){
-        Log.d("WifiDirect", "receive file.");
-        String[] name_arr=fileName.split("\\.",2);
-        try {
-            //save file with timestamp
-//            final File f = new File(Environment.getExternalStorageDirectory() + "/D2D"
-//                    + "/" + System.currentTimeMillis()
-//                    +"."+ name_arr[name_arr.length-1]);
-            //save file with original name
-            final File f = new File(Environment.getExternalStorageDirectory() + "/D2D"
-                    + "/" + fileName);
-
-            File dirs = new File(f.getParent());
-            if (!dirs.exists())
-                dirs.mkdirs();
-            dirs.mkdirs();
-            f.createNewFile();
-            InputStream inputstream = socket.getInputStream();
-            copyFile(inputstream, new FileOutputStream(f));
-        }catch (IOException e){
-            return false;
-        }
-        return true;
-
-    }
-
     public void connectTo(WifiP2pDevice d){
         Log.d("WifiDirect", "connecting.");
         final WifiP2pDevice device=d;
@@ -477,22 +281,5 @@ public class WiFiDirect extends AppCompatActivity {
             }
         }
         throw new IOException("Device not found");
-    }
-
-    private void createNotification(String contentTitle, String contentText, int icon) {
-        Log.d("WifiDirect", "creating noti.");
-
-        //Build the notification using Notification.Builder
-        Notification.Builder builder = new Notification.Builder(mContext)
-                .setSmallIcon(icon)
-                .setAutoCancel(true)
-                .setContentTitle(contentTitle)
-                .setContentText(contentText);
-
-        //Get current notification
-        mNotification = builder.getNotification();
-
-        //Show the notification
-        mNotificationManager.notify(NOTIFICATION_ID, mNotification);
     }
 }
