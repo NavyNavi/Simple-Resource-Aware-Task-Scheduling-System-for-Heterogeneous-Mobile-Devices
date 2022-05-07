@@ -56,8 +56,8 @@ void TaskNode::cleanup(){
     }
 }
 
-std::vector<TaskNode*> TaskNode::commit() {
-    std::vector<TaskNode*> ready_node;
+std::list<TaskNode*> TaskNode::commit() {
+    std::list<TaskNode*> ready_node;
     if(next_nodes.empty()) { return ready_node; }
     for (TaskNode *edge : next_nodes) {
         edge->dependency--;

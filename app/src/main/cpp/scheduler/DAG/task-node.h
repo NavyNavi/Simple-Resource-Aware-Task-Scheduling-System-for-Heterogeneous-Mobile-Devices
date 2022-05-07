@@ -3,6 +3,8 @@
 
 class TaskNode : public Node {
 public:
+    int dependency = 1;
+
     TaskNode(int funcId, int args, long id);
     TaskNode(TaskNode const &node);
 
@@ -11,12 +13,11 @@ public:
     int execute();
     int setCriticality();
     void cleanup();
-    std::vector<TaskNode*> commit();
+    std::list<TaskNode*> commit();
     std::string serialize();
 
 private:
     std::vector<TaskNode *> next_nodes;
-    int dependency = 1;
     int funcId;
     int args;
 };

@@ -27,24 +27,42 @@ TaskNode * Scheduler::addNode(int funcId, TaskNode *prev_node) {
     return new_node;
 }
 
-std::string Scheduler::commit() {
+std::string Scheduler::startScheduler(JNIEnv* env, jobject jObj) {
+    this->env = env;
+    this->jObj = jObj;
     currCrit = start_node->setCriticality();
-    std::string task = start_node->getNextNode()->serialize();
-    return task;
+    commitNode(start_node->id);
 }
 
 void Scheduler::assign() {
-    //temp create worker here
-    Worker worker1;
-    Worker worker2;
-    worker1.receiveTask(*start_node->getNextNode());
+    assigning = true;
+    while(assigning){
+        if(pending_node.empty()) {
+            assigning = false;
+            break;
+        }
+        //add thread safety
+        //consider criticality
+        std::string task = pending_node.front()->serialize();
+        sendTask(task);
+        pending_node.pop_front();
+    }
+}
+
+void Scheduler::sendTask(std::string task) {
+    jstring jTask = env->NewStringUTF(task.c_str());
+    jclass taskClass = env->FindClass("com/example/myapplication/MainActivity");
+    jmethodID methodId = env->GetMethodID(taskClass, "setSerializedTask", "(Ljava/lang/String;)V");
+    env->CallVoidMethod(jObj, methodId, jTask);
 }
 
 void Scheduler::commitNode(int id) {
     std::list<TaskNode*>::iterator it;
-    for (it = pending_node.begin(); it != pending_node.end(); ++ it) {
+    for (it = offloaded_node.begin(); it != offloaded_node.end(); ++ it) {
         if ((*it)->id == id) {
-            std::vector<TaskNode*> ready_node = (*it)->commit();
+            std::list<TaskNode*> ready_node = (*it)->commit();
+            pending_node.merge(ready_node);
+            if(!assigning) { assign(); }
         }
     }
 }

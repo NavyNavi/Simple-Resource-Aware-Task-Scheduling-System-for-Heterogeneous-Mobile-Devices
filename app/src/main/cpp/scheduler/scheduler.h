@@ -9,17 +9,22 @@ class Scheduler {
         void operator=(Scheduler const&)  = delete;
 
         TaskNode* addNode(int funcId, TaskNode* prev_node = nullptr);
-        std::string commit();
-        void assign();
-        std::vector<TaskNode*> commitNode(int id);
+        //how to make sure its started?
+        std::string startScheduler(JNIEnv* env, jobject jObj);
+        void commitNode(int id);
 
     private:
         Scheduler() {}
         ~Scheduler();
+        void assign();
+        void sendTask(std::string task);
 
         int currCrit;
         long idCounter = 1;
-        //sent
+        bool assigning = false;
+        std::list<TaskNode*> offloaded_node;
         std::list<TaskNode*> pending_node;
+        JNIEnv* env;
+        jobject jObj;
         StartNode* start_node = new StartNode();
 };

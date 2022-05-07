@@ -32,3 +32,15 @@ void StartNode::cleanup() {
         edge = nullptr;
     }
 }
+
+std::list<TaskNode*> StartNode::commit() {
+    std::list<TaskNode*> ready_node;
+    if(next_nodes.empty()) { return ready_node; }
+    for (TaskNode *edge : next_nodes) {
+        edge->dependency--;
+        if (edge->dependency == 0) {
+            ready_node.push_back(edge);
+        }
+    }
+    return ready_node;
+}

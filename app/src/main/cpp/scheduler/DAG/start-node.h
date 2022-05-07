@@ -5,6 +5,7 @@ public:
     int setCriticality();
     int execute();
     void cleanup();
+    std::list<TaskNode*> commit();
 private:
     std::vector<TaskNode *> next_nodes;
 };
