@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private ReceiveTask receiver;
     private SendTask sender;
 
-    public void setSerializedTask(String taskStr){
+    public void setSerializedTask(String taskStr, int workerId){
         byte[] serializedTask = taskStr.getBytes(StandardCharsets.UTF_8);
         sender=new SendTask(getApplicationContext(), null);
         //to do get group addr

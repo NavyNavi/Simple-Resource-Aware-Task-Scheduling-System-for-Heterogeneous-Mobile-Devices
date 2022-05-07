@@ -17,7 +17,7 @@ class Scheduler {
         Scheduler() {}
         ~Scheduler();
         void assign();
-        void sendTask(std::string task);
+        void sendTask(std::string task, int worker);
 
         int currCrit;
         long idCounter = 1;

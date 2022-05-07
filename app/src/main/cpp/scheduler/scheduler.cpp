@@ -8,6 +8,7 @@
 #include "worker.cpp"
 #include "result-ticket.cpp"
 #include "scheduler.h"
+#include "profiler.cpp"
 
 Scheduler::~Scheduler() {
     start_node->cleanup();
@@ -32,6 +33,7 @@ std::string Scheduler::startScheduler(JNIEnv* env, jobject jObj) {
     this->jObj = jObj;
     currCrit = start_node->setCriticality();
     commitNode(start_node->id);
+    assign();
 }
 
 void Scheduler::assign() {
@@ -41,19 +43,30 @@ void Scheduler::assign() {
             assigning = false;
             break;
         }
+
         //add thread safety
-        //consider criticality
+        Profiler& profiler = Profiler::getInstance();
+        TaskNode* node = pending_node.front();
+
+        int worker;
+        if(node->getCriticality() >= currCrit) {
+            currCrit--;
+            worker = profiler.getBestWorker();
+        } else {
+            worker = profiler.getWorker();
+        }
+
         std::string task = pending_node.front()->serialize();
-        sendTask(task);
+        sendTask(task, worker);
         pending_node.pop_front();
     }
 }
 
-void Scheduler::sendTask(std::string task) {
+void Scheduler::sendTask(std::string task, int worker) {
     jstring jTask = env->NewStringUTF(task.c_str());
     jclass taskClass = env->FindClass("com/example/myapplication/MainActivity");
-    jmethodID methodId = env->GetMethodID(taskClass, "setSerializedTask", "(Ljava/lang/String;)V");
-    env->CallVoidMethod(jObj, methodId, jTask);
+    jmethodID methodId = env->GetMethodID(taskClass, "setSerializedTask", "(Ljava/lang/String;I)V");
+    env->CallVoidMethod(jObj, methodId, jTask, worker);
 }
 
 void Scheduler::commitNode(int id) {

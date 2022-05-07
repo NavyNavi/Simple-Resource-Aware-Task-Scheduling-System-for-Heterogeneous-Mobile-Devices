@@ -70,7 +70,6 @@ class SendTask extends AsyncTask<Object, Void,Void> {
                 }
                 break;
         }
-
         return null;
     }
 }

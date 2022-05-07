@@ -10,7 +10,7 @@ public:
     Profiler(Profiler const&)        = delete;
     void operator=(Profiler const&)  = delete;
 
-    void updateData(string res_str){
+    void updateData(std::string res_str){
         std::vector<std::string> tokens;
         std::copy( std::istream_iterator<std::string>( res_str ),
                    std::istream_iterator<std::string>(),
@@ -26,8 +26,17 @@ public:
         Scheduler& scheduler = Scheduler::getInstance();
         scheduler.commitNode(workerId);
     }
+
+    int getBestWorker() {
+        return worker_performance.begin()->second;
+    }
+
+    int getWorker() {
+        std::multimap<float, int>::iterator it = worker_performance.begin();
+        it++;
+        return it->second;
+    }
 private:
     Profiler() {}
     std::multimap<float, int> worker_performance;
-
 };
