@@ -56,6 +56,18 @@ void TaskNode::cleanup(){
     }
 }
 
+std::vector<TaskNode*> TaskNode::commit() {
+    std::vector<TaskNode*> ready_node;
+    if(next_nodes.empty()) { return ready_node; }
+    for (TaskNode *edge : next_nodes) {
+        edge->dependency--;
+        if (edge->dependency == 0) {
+            ready_node.push_back(edge);
+        }
+    }
+    return ready_node;
+}
+
 std::string TaskNode::serialize() {
     std::ostringstream ss;
     ss << id << "," << funcId << "," << args;

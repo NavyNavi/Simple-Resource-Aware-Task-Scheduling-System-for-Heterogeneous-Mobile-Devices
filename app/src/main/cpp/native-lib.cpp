@@ -1,6 +1,7 @@
 #include <jni.h>
 #include <string>
 #include "testcase/printPlan.cpp"
+#include "scheduler/profiler.cpp"
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_example_myapplication_MainActivity_stringFromJNI(
@@ -17,6 +18,14 @@ Java_com_example_myapplication_MainActivity_printPlan(JNIEnv* env, jobject jObj)
     jclass taskClass = env->FindClass("com/example/myapplication/MainActivity");
     jmethodID methodId = env->GetMethodID(taskClass, "setSerializedTask", "(Ljava/lang/String;)V");
     env->CallVoidMethod(jObj, methodId, jTask);
+
+    return env->NewStringUTF(res.c_str());
+}
+
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_example_myapplication_MainActivity_completeTask(JNIEnv* env, jobject jObj, jstring serializedTask) {
+    std::string res = getSolution();
+    jstring jTask = env->NewStringUTF(res.c_str());
 
     return env->NewStringUTF(res.c_str());
 }

@@ -11,10 +11,12 @@ public:
     int execute();
     int setCriticality();
     void cleanup();
+    std::vector<TaskNode*> commit();
     std::string serialize();
 
 private:
     std::vector<TaskNode *> next_nodes;
+    int dependency = 1;
     int funcId;
     int args;
 };

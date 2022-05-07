@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <string>
+#include <list>
 #include <stdio.h>
 #include <android/log.h>
 #include "DAG/start-node.cpp"
@@ -37,4 +38,14 @@ void Scheduler::assign() {
     Worker worker1;
     Worker worker2;
     worker1.receiveTask(*start_node->getNextNode());
+}
+
+std::vector<TaskNode*> Scheduler::commitNode(int id) {
+    std::list<TaskNode*>::iterator it;
+    for (it = pending_node.begin(); it != pending_node.end(); ++ it) {
+        if ((*it)->id == id) {
+            return (*it)->commit();
+        }
+    }
+    return std::vector<TaskNode*>();
 }
