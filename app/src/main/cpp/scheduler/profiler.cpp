@@ -24,7 +24,7 @@ public:
         worker_performance.insert({duration, workerId});
 
         Scheduler& scheduler = Scheduler::getInstance();
-        scheduler
+        scheduler.commitNode(workerId);
     }
 private:
     Profiler() {}

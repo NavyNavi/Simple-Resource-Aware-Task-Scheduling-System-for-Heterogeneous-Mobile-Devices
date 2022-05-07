@@ -19,6 +19,7 @@ class Scheduler {
 
         int currCrit;
         long idCounter = 1;
+        //sent
         std::list<TaskNode*> pending_node;
         StartNode* start_node = new StartNode();
 };

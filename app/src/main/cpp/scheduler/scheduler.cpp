@@ -40,12 +40,11 @@ void Scheduler::assign() {
     worker1.receiveTask(*start_node->getNextNode());
 }
 
-std::vector<TaskNode*> Scheduler::commitNode(int id) {
+void Scheduler::commitNode(int id) {
     std::list<TaskNode*>::iterator it;
     for (it = pending_node.begin(); it != pending_node.end(); ++ it) {
         if ((*it)->id == id) {
-            return (*it)->commit();
+            std::vector<TaskNode*> ready_node = (*it)->commit();
         }
     }
-    return std::vector<TaskNode*>();
 }
