@@ -22,7 +22,7 @@ Java_com_example_myapplication_MainActivity_printPlan(JNIEnv* env, jobject jObj)
     return env->NewStringUTF(res.c_str());
 }
 
-extern "C" JNIEXPORT jstring JNICALL
+extern "C" JNIEXPORT void JNICALL
 Java_com_example_myapplication_MainActivity_completeTask(JNIEnv* env, jobject jObj, jstring serializedTask) {
     jboolean isCopy;
     size_t length = env->GetStringLength(serializedTask);
@@ -31,6 +31,4 @@ Java_com_example_myapplication_MainActivity_completeTask(JNIEnv* env, jobject jO
 
     Profiler& profiler = Profiler::getInstance();
     profiler.updateData(cpp_string);
-
-    return env->NewStringUTF(res.c_str());
 }
