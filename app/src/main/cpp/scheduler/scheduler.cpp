@@ -57,6 +57,8 @@ void Scheduler::assign() {
         }
 
         std::string task = pending_node.front()->serialize();
+        profiler.useWorker(worker);
+        //timeout for recovery
         sendTask(task, worker);
         pending_node.pop_front();
     }

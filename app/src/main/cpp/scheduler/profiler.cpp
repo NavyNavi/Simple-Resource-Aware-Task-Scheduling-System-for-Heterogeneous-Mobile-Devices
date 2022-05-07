@@ -36,7 +36,23 @@ public:
         it++;
         return it->second;
     }
+
+    void useWorker(int worker_id) {
+        std::multimap<float, int> ::iterator it;
+        for (it = worker_performance.begin(); it != worker_performance.end(); it++)
+        {
+            if (it->second == worker_id) {
+                float duration = it->first;
+                worker_performance.erase(it);
+                //more accurately only double exec time and not transmit time
+                worker_performance.insert({duration*2, worker_id});
+                break;
+            }
+        }
+    }
+
 private:
     Profiler() {}
+    //change to map and avoid collision
     std::multimap<float, int> worker_performance;
 };
