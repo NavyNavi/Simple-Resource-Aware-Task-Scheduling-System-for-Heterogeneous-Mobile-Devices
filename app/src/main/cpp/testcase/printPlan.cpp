@@ -21,7 +21,7 @@ string getSolution() {
     map<int,callback_function> funcMap;
     funcMap.insert(pair<int, callback_function>(0, printLine));
 
-    Scheduler scheduler;
+    Scheduler& scheduler = Scheduler::getInstance();
     TaskNode* node1_1 = scheduler.addNode(0);
     TaskNode* node1_2 = scheduler.addNode(0);
     TaskNode* node1_3 = scheduler.addNode(0);
@@ -30,6 +30,5 @@ string getSolution() {
     TaskNode* node1_1_2 = scheduler.addNode(0, node1_1);
     TaskNode* node1_3_1 = scheduler.addNode(0, node1_3);
     TaskNode* node1_1_2_1 = scheduler.addNode(0, node1_1_2);
-    std::string task = scheduler.commit();
-    return task;
+    return "started";
 }

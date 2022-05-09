@@ -21,7 +21,7 @@ class SendTask extends AsyncTask<Object, Void,Void> {
     byte[] serializedTask;
 
     public SendTask(Context context, byte[] serializedTask){
-        Log.d("SendTask", "Initiating sender.");
+        Log.d("SendTask", "Initiating sender thread.");
     }
 
     public static boolean sendFile(Socket socket, byte[] serializedTask) {
@@ -51,7 +51,7 @@ class SendTask extends AsyncTask<Object, Void,Void> {
         switch (ownership){
             case 1:
                 try {
-                    Log.d("SendTask", "Sending in 1st mode");
+                    Log.d("SendTask", "Sending as server");
                     serverSocket=new ServerSocket(8888);
                     socket=serverSocket.accept();
                     sendFile(socket,serializedTask);
@@ -62,7 +62,7 @@ class SendTask extends AsyncTask<Object, Void,Void> {
                 break;
             case 2:
                 try {
-                    Log.d("SendTask", "Sending in 2nd mode");
+                    Log.d("SendTask", "Sending as client");
                     socket.connect(new InetSocketAddress(hostAdd,8888),500);
                     sendFile(socket,serializedTask);
                 } catch (IOException e) {

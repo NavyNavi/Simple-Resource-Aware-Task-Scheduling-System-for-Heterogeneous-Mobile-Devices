@@ -19,6 +19,9 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -44,10 +47,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 //import static com.fyp.d2d_android.MyFirebaseMessagingService.msgFlag;
 @SuppressLint("MissingPermission")
-public class WiFiDirect extends AppCompatActivity {
+public class WiFiDirect extends AppCompatActivity implements MessageTarget, WifiP2pManager.ConnectionInfoListener, Handler.Callback {
 
     private static ReceiveTask receiveTask;
     private static SendTask sendTask;
@@ -67,6 +71,8 @@ public class WiFiDirect extends AppCompatActivity {
     List<WifiP2pDevice> peers=new ArrayList<WifiP2pDevice>();
     String[] deviceNameArray;
     WifiP2pDevice[] deviceArray;
+    Map<Integer, InetAddress> worker2Ip;
+    private Handler handler = new Handler(Looper.getMainLooper(), this);
 
     String paringSSID;
     private byte[] SerializedTask;
@@ -176,36 +182,41 @@ public class WiFiDirect extends AppCompatActivity {
         }
     };
 
-    WifiP2pManager.ConnectionInfoListener connectionInfoListener=new WifiP2pManager.ConnectionInfoListener() {
-        @Override
-        public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
-            Log.d("WifiDirect","connection info available.");
-            final InetAddress groupOwnerAddress=wifiP2pInfo.groupOwnerAddress;
+    @Override
+    public boolean handleMessage(Message msg){
+        Log.d("handler", "Firing handler callback.");
+        return true;
+    }
 
-            if(wifiP2pInfo.groupFormed)
-            {
-                Log.d("WifiDirect","group formed - client");
-                connectionStatus.setText("Client");
-                WiFiDirect.receiveTask=new ReceiveTask(getApplicationContext());
-                if (wifiP2pInfo.isGroupOwner){
-                    WiFiDirect.receiveTask.execute(groupOwnerAddress,getApplicationContext(),1);
-                }else {
-                    WiFiDirect.receiveTask.execute(groupOwnerAddress,getApplicationContext(),2);
-                }
+    public Handler getHandler() {
+        return handler;
+    }
 
-            }else if(wifiP2pInfo.groupFormed)
-            {
-                Log.d("WifiDirect","group formed - host.");
-                connectionStatus.setText("Host");
-                WiFiDirect.sendTask=new SendTask(getApplicationContext(), null);
-                if (wifiP2pInfo.isGroupOwner){
-                    WiFiDirect.sendTask.execute(groupOwnerAddress,getApplicationContext(),1);
-                }else{
-                    WiFiDirect.sendTask.execute(groupOwnerAddress,getApplicationContext(),2);
-                }
+    @Override
+    public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
+        Log.d("WifiDirect","connection info available.");
+        final InetAddress groupOwnerAddress=wifiP2pInfo.groupOwnerAddress;
+        Thread handler = null;
+
+        if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner)
+        {
+            Log.d("WifiDirect","connected as server");
+            //get the ping
+            connectionStatus.setText("Client");
+            try {
+                handler = new ServerSocketHandler(((MessageTarget) this).getHandler());
+            } catch (IOException e) {
+                Log.d("WifiDirect", "Failed to create a server thread");
+                return;
             }
+        }else if(wifiP2pInfo.groupFormed)
+        {
+            Log.d("WifiDirect","connected as client");
+            //ping the server to register as worker
+            handler = new ClientSocketHandler(((MessageTarget) this).getHandler(), wifiP2pInfo.groupOwnerAddress);
+            handler.start();
         }
-    };
+    }
 
     @Override
     protected void onResume() {

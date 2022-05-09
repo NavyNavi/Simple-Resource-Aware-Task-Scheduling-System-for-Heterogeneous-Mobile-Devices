@@ -1,3 +1,6 @@
+#ifndef SCHEDULER_INCLUDED
+#define SCHEDULER_INCLUDED
+
 class Scheduler {
     public:
         static Scheduler& getInstance()
@@ -28,3 +31,5 @@ class Scheduler {
         jobject jObj;
         StartNode* start_node = new StartNode();
 };
+
+#endif

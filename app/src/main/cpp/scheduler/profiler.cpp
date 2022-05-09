@@ -1,3 +1,6 @@
+#ifndef PROFILER_INCLUDED
+#define PROFILER_INCLUDED
+
 #include "scheduler.h"
 
 class Profiler {
@@ -12,7 +15,8 @@ public:
 
     void updateData(std::string res_str){
         std::vector<std::string> tokens;
-        std::copy( std::istream_iterator<std::string>( res_str ),
+        std::stringstream strstr(res_str);
+        std::copy( std::istream_iterator<std::string>(strstr),
                    std::istream_iterator<std::string>(),
                    std::back_inserter(tokens) );
 
@@ -56,3 +60,5 @@ private:
     //change to map and avoid collision
     std::multimap<float, int> worker_performance;
 };
+
+#endif

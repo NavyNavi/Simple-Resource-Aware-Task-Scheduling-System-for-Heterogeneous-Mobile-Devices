@@ -27,14 +27,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ActivityMainBinding binding;
-    private ReceiveTask receiver;
-    private SendTask sender;
+    private TaskManager taskManager;
 
-    public void setSerializedTask(String taskStr, int workerId){
-        byte[] serializedTask = taskStr.getBytes(StandardCharsets.UTF_8);
-        sender=new SendTask(getApplicationContext(), null);
-        //to do get group addr
-        sender.execute(null,getApplicationContext(),1);
+    public void setChatManager(TaskManager manager) {
+        taskManager = manager;
+    }
+
+    public void setSerializedTask(String task, int workerId){
+        taskManager.write(task);
     };
 
     @Override
