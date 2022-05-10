@@ -23,12 +23,12 @@ string getSolution() {
 
     Scheduler& scheduler = Scheduler::getInstance();
     TaskNode* node1_1 = scheduler.addNode(0);
-    TaskNode* node1_2 = scheduler.addNode(0);
-    TaskNode* node1_3 = scheduler.addNode(0);
-    TaskNode* node1_4 = scheduler.addNode(0);
+    //TaskNode* node1_2 = scheduler.addNode(0);
+    //TaskNode* node1_3 = scheduler.addNode(0);
+    //TaskNode* node1_4 = scheduler.addNode(0);
     TaskNode* node1_1_1 = scheduler.addNode(0, node1_1);
     TaskNode* node1_1_2 = scheduler.addNode(0, node1_1);
-    TaskNode* node1_3_1 = scheduler.addNode(0, node1_3);
+    //TaskNode* node1_3_1 = scheduler.addNode(0, node1_3);
     TaskNode* node1_1_2_1 = scheduler.addNode(0, node1_1_2);
     return "started";
 }

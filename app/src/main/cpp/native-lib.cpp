@@ -15,6 +15,7 @@ extern "C" JNIEXPORT jstring JNICALL
 Java_com_example_myapplication_MainActivity_printPlan(JNIEnv* env, jobject jObj) {
     std::string res = getSolution();
     Scheduler& scheduler = Scheduler::getInstance();
+    scheduler.startScheduler(env, jObj);
 
     return env->NewStringUTF(res.c_str());
 }

@@ -185,6 +185,13 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
     @Override
     public boolean handleMessage(Message msg){
         Log.d("handler", "Firing handler callback.");
+        switch (msg.what) {
+            case (0x400 + 1):
+                break;
+            case(0x400 + 2):
+                Object obj = msg.obj;
+                MainActivity.setChatManager((TaskManager) obj);
+        }
         return true;
     }
 

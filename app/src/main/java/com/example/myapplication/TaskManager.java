@@ -24,7 +24,7 @@ public class TaskManager implements Runnable {
 
     private InputStream iStream;
     private OutputStream oStream;
-    private static final String TAG = "ChatHandler";
+    private static final String TAG = "TaskManager";
 
     @Override
     public void run() {
@@ -65,6 +65,7 @@ public class TaskManager implements Runnable {
     }
 
     public void write(String msg) {
+        Log.d(TAG, "sending task.");
         byte[] buffer = msg.getBytes();
         Thread thread = new Thread() {
             public void run() {

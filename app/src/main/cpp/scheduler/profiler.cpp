@@ -32,13 +32,22 @@ public:
     }
 
     int getBestWorker() {
-        return worker_performance.begin()->second;
+        ALOG("profiler: getting best worker.");
+        if (!worker_performance.empty()) {
+            return worker_performance.begin()->second;
+        }
+        ALOG("profiler: no worker found.");
+        return -1;
     }
 
     int getWorker() {
-        std::multimap<float, int>::iterator it = worker_performance.begin();
-        it++;
-        return it->second;
+        ALOG("profiler: getting worker.");
+        if (worker_performance.size() > 1) {
+            std::multimap<float, int>::iterator it = worker_performance.begin();
+            it++;
+            return it->second;
+        }
+        return getBestWorker();
     }
 
     void useWorker(int worker_id) {

@@ -34,6 +34,7 @@ void StartNode::cleanup() {
 }
 
 std::list<TaskNode*> StartNode::commit() {
+    ALOG("start node: finding next nodes.");
     std::list<TaskNode*> ready_node;
     if(next_nodes.empty()) { return ready_node; }
     for (TaskNode *edge : next_nodes) {

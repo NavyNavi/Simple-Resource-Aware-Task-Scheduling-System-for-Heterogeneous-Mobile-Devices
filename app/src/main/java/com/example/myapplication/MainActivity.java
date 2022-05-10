@@ -27,13 +27,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ActivityMainBinding binding;
-    private TaskManager taskManager;
+    private static TaskManager taskManager;
 
-    public void setChatManager(TaskManager manager) {
+    public static void setChatManager(TaskManager manager) {
         taskManager = manager;
     }
 
     public void setSerializedTask(String task, int workerId){
+        Log.d("MainActiity", "sending task.");
         taskManager.write(task);
     };
 

@@ -25,7 +25,7 @@ class Scheduler {
         int currCrit;
         long idCounter = 1;
         bool assigning = false;
-        std::list<TaskNode*> offloaded_node;
+        std::map<int, TaskNode*> id2address;
         std::list<TaskNode*> pending_node;
         JNIEnv* env;
         jobject jObj;
