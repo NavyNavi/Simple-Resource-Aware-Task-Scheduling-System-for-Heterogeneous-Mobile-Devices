@@ -22,6 +22,17 @@ int StartNode::setCriticality() {
     return criticality;
 }
 
+void StartNode::findCriticalNodes() {
+    if(critical) {
+        for (TaskNode* edge : next_nodes) {
+            if (edge->id == (this->id - 1)) {
+                edge->critical = true;
+                edge->findCriticalNodes();
+            }
+        }
+    }
+}
+
 int StartNode::execute() { return 0; }
 
 void StartNode::cleanup() {

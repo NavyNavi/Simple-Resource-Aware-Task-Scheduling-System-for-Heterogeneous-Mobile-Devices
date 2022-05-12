@@ -36,6 +36,7 @@ std::string Scheduler::startScheduler(JNIEnv* env, jobject jObj) {
     this->env = env;
     this->jObj = jObj;
     currCrit = start_node->setCriticality();
+    start_node->findCriticalNodes();
     std::list<TaskNode*> ready_node = start_node->commit();
     pending_node.merge(ready_node);
     assign();
@@ -56,7 +57,7 @@ void Scheduler::assign() {
         TaskNode* node = pending_node.front();
 
         int worker;
-        if(node->getCriticality() >= currCrit) {
+        if(node->getCriticality()) {
             currCrit--;
             worker = profiler.getBestWorker();
         } else {

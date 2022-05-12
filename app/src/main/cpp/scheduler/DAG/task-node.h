@@ -12,6 +12,7 @@ public:
     void addNextNode(TaskNode* node);
     int execute();
     int setCriticality();
+    void findCriticalNodes();
     void cleanup();
     std::list<TaskNode*> commit();
     std::string serialize();

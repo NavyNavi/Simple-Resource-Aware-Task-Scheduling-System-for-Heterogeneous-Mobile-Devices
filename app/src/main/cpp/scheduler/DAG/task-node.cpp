@@ -36,16 +36,28 @@ int TaskNode::execute() {
 }
 
 int TaskNode::setCriticality(){
-            if((criticality) == 0) {
-                int max = 0;
-                for (TaskNode* edge : next_nodes) {
-                    int new_max = edge->setCriticality();
-                    max = new_max > max ? new_max : max;
-                }
-                criticality = ++max;
-            }
-            return criticality;
+    if((criticality) == 0) {
+        int max = 0;
+        for (TaskNode* edge : next_nodes) {
+            int new_max = edge->setCriticality();
+            max = new_max > max ? new_max : max;
         }
+        criticality = ++max;
+    }
+    return criticality;
+}
+
+void TaskNode::findCriticalNodes() {
+    if(critical) {
+        for (TaskNode* edge : next_nodes) {
+            if (edge->id == (this->id - 1)) {
+                edge->critical = true;
+                edge->findCriticalNodes();
+            }
+        }
+    }
+}
+
 
 void TaskNode::cleanup(){
     if(next_nodes.empty()) { return; }

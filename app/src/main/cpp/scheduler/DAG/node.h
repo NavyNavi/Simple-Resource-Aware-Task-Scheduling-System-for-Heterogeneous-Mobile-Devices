@@ -9,8 +9,9 @@
 class Node {
     public:
         long id;
+        bool critical = false;
 
-        const int getCriticality() const { return criticality; }
+        const bool getCriticality() const { return critical; }
         virtual int execute() = 0;
         virtual int setCriticality() = 0;
         virtual void cleanup() = 0;
@@ -18,7 +19,6 @@ class Node {
 
     protected:
         int criticality = 0;
-
 };
 
 #endif

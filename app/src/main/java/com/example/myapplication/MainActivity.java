@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static TaskManager taskManager;
 
     public static void setChatManager(TaskManager manager) {
+        Log.d("MainActiity", "received handler.");
         taskManager = manager;
     }
 

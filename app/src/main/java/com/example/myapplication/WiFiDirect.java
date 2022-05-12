@@ -208,8 +208,7 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
         if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner)
         {
             Log.d("WifiDirect","connected as server");
-            //get the ping
-            connectionStatus.setText("Client");
+            connectionStatus.setText("Host");
             try {
                 handler = new ServerSocketHandler(((MessageTarget) this).getHandler());
             } catch (IOException e) {
