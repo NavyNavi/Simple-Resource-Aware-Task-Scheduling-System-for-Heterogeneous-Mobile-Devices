@@ -53,9 +53,6 @@ import java.util.Map;
 @SuppressLint("MissingPermission")
 public class WiFiDirect extends AppCompatActivity implements MessageTarget, WifiP2pManager.ConnectionInfoListener, Handler.Callback {
 
-    private static ReceiveTask receiveTask;
-    private static SendTask sendTask;
-
     Button btnOnOff, btnDiscover;
     ListView listView;
     TextView connectionStatus;

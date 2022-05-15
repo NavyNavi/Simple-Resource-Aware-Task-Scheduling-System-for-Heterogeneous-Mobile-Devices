@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <android/log.h>
 #include "DAG/task-node.cpp"
-#include "result-container.cpp"
 #include "worker.h"
 
 void Worker::receiveTask(TaskNode task) {
@@ -21,7 +20,6 @@ void Worker::exeTasks() {
         TaskNode* task = &task_queue.front();
         int res = task->execute();
         ALOG("Worker execution result : %d.", res);
-        new ResultContainer(res, task->id);
         //send finish noti to scheduler
         task_queue.pop();
     }

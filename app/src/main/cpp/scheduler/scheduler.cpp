@@ -6,7 +6,6 @@
 #include "DAG/start-node.cpp"
 #include "DAG/task-node.h"
 #include "worker.cpp"
-#include "result-ticket.cpp"
 #include "scheduler.h"
 #include "profiler.cpp"
 
