@@ -6,6 +6,7 @@
 #include <string>
 #include <stdio.h>
 #include "../scheduler/scheduler.cpp"
+#include "../scheduler/worker.h"
 #include "../scheduler/DAG/task-node.h"
 using namespace std;
 
@@ -14,12 +15,12 @@ int printLine() {
     return 2;
 }
 
+typedef int (*callback_function)(void);
+std::map<int,callback_function> funcMap = { {0, printLine} };
+
 //design DAG
 string getSolution() {
     ALOG("start test: print plan.");
-    typedef int (*callback_function)(void);
-    map<int,callback_function> funcMap;
-    funcMap.insert(pair<int, callback_function>(0, printLine));
 
     Scheduler& scheduler = Scheduler::getInstance();
     TaskNode* node1_1 = scheduler.addNode(0);

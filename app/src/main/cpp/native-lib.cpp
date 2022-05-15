@@ -21,6 +21,18 @@ Java_com_example_myapplication_MainActivity_printPlan(JNIEnv* env, jobject jObj)
 }
 
 extern "C" JNIEXPORT void JNICALL
+Java_com_example_myapplication_MainActivity_executeTask(JNIEnv* env, jobject jObj, jstring serializedTask) {
+    jboolean isCopy;
+    size_t length = env->GetStringLength(serializedTask);
+    const char* cpp_char = env->GetStringUTFChars(serializedTask, &isCopy);
+    std::string cpp_string = std::string(cpp_char, length);
+
+    Worker& worker = Worker::getInstance();
+    worker.setEnv(env, jObj);
+    worker.queueTask(cpp_string);
+}
+
+extern "C" JNIEXPORT void JNICALL
 Java_com_example_myapplication_MainActivity_completeTask(JNIEnv* env, jobject jObj, jstring serializedTask) {
     jboolean isCopy;
     size_t length = env->GetStringLength(serializedTask);

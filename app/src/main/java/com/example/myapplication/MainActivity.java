@@ -39,6 +39,11 @@ public class MainActivity extends AppCompatActivity {
         taskManager.write(task);
     };
 
+    public void sendResult(String res) {
+        Log.d("MainActivity", "sending result.");
+        taskManager.write(res);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("MainActivity", "Creating activity.");

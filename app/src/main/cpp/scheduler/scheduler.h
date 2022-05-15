@@ -30,6 +30,8 @@ class Scheduler {
         JNIEnv* env;
         jobject jObj;
         StartNode* start_node = new StartNode();
+
+        friend class Worker;
 };
 
 #endif

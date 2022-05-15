@@ -1,8 +1,28 @@
+#ifndef WORKER_INCLUDED
+#define WORKER_INCLUDED
+
+typedef int (*callback_function)(void);
+extern std::map<int,callback_function> funcMap;
+
 class Worker {
 public:
-    void receiveTask(TaskNode task);
-    void exeTasks();
+    static Worker& getInstance()
+    {
+        static Worker instance;
+        return instance;
+    }
+    Worker(Worker const&)       = delete;
+    void operator=(Worker const&)  = delete;
+
+    void setEnv(JNIEnv* env, jobject jObj);
+    void queueTask(std::string task);
+    void exeTasks(std::string task);
 private:
-    //int num_threads = std::thread::hardware_concurrency();
-    std::queue<TaskNode> task_queue;
+    Worker() {}
+    ~Worker() {}
+    int worker_id;
+    JNIEnv* env;
+    jobject jObj;
 };
+
+#endif
