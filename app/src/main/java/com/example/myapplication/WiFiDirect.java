@@ -99,6 +99,7 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
             }
         });
 
+        //not exist
         btnDiscover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -187,6 +188,9 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
         Log.d("handler", "Firing handler callback.");
         switch (msg.what) {
             case (0x400 + 1):
+                byte[] readBuf = (byte[]) msg.obj;
+                String readMessage = new String(readBuf, 0, msg.arg1);
+                Log.d("WifiDirect", readMessage);
                 break;
             case(0x400 + 2):
                 Object obj = msg.obj;
@@ -211,6 +215,7 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
             connectionStatus.setText("Host");
             try {
                 handler = new ServerSocketHandler(((MessageTarget) this).getHandler());
+                handler.start();
             } catch (IOException e) {
                 Log.d("WifiDirect", "Failed to create a server thread");
                 return;
@@ -227,6 +232,7 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
     @Override
     protected void onResume() {
         super.onResume();
+        //mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
         registerReceiver(mReceiver,mIntentFilter);
     }
 
