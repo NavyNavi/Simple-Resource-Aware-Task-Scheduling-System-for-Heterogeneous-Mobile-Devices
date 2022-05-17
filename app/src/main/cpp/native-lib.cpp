@@ -3,17 +3,20 @@
 #include "testcase/printPlan.cpp"
 #include "scheduler/profiler.cpp"
 
-extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_myapplication_MainActivity_stringFromJNI(
-        JNIEnv* env,
-        jobject /* this */) {
-    std::string hello = "Hello from C++";
-    return env->NewStringUTF(hello.c_str());
-}
+enum testcases{wifi_communication, matrix_mul};
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_myapplication_MainActivity_printPlan(JNIEnv* env, jobject jObj) {
-    std::string res = getSolution();
+Java_com_example_myapplication_MainActivity_startScheduler(JNIEnv* env, jobject jObj, int testcase) {
+    std::string res;
+    switch (testcase) {
+        case wifi_communication:
+            res = getSolution();
+            break;
+        case matrix_mul:
+            break;
+        default:
+            break;
+    }
     Scheduler& scheduler = Scheduler::getInstance();
     scheduler.startScheduler(env, jObj);
 
@@ -33,7 +36,7 @@ Java_com_example_myapplication_MainActivity_executeTask(JNIEnv* env, jobject jOb
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_example_myapplication_MainActivity_completeTask(JNIEnv* env, jobject jObj, jstring serializedTask) {
+Java_com_example_myapplication_MainActivity_receiveCompletedTask(JNIEnv* env, jobject jObj, jstring serializedTask) {
     jboolean isCopy;
     size_t length = env->GetStringLength(serializedTask);
     const char* cpp_char = env->GetStringUTFChars(serializedTask, &isCopy);

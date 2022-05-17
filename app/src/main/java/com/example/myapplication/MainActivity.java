@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private static TaskManager taskManager;
+    private enum testcases {wifi_communication, matrix_mul};
 
     public static void setChatManager(TaskManager manager) {
         Log.d("MainActiity", "received handler.");
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         TextView sampleTv = binding.sampleText;
         switch (view.getId()) {
             case R.id.nqueen_button:
-                sampleTv.setText(printPlan());
+                sampleTv.setText(startScheduler(testcases.wifi_communication.ordinal()));
                 break;
             case R.id.to_wifi_button:
                 Log.d("MainActivity", "To wifi button clicked.");
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
      * A native method that is implemented by the 'myapplication' native library,
      * which is packaged with this application.
      */
-    public native String stringFromJNI();
-    public native String printPlan();
+    public native String startScheduler(int testcase);
+    public native void executeTask(String serializedTask);
+    public native void receiveCompletedTask(String serializedTask);
 }
