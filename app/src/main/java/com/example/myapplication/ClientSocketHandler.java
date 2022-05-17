@@ -26,7 +26,7 @@ public class ClientSocketHandler extends Thread {
         try {
             socket.bind(null);
             socket.connect(new InetSocketAddress(mAddress.getHostAddress(),
-                    8080), 5000);
+                    4545), 5000);
             Log.d(TAG, "Launching the I/O handler");
             task = new TaskManager(socket, handler);
             new Thread(task).start();

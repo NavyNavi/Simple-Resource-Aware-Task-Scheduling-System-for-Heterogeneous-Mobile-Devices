@@ -15,7 +15,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
     private WiFiDirect mActivity;
-    final private String TAG = "WiFiDirectBroadcastReceiver";
+    final private String TAG = "WiFiDirectReceiver";
 
     public WiFiDirectBroadcastReceiver(WifiP2pManager mManager, WifiP2pManager.Channel mChannel, WiFiDirect mActivity)
     {

@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setSerializedTask(String task, int workerId){
         Log.d("MainActiity", "sending task.");
-        //taskManager.write(task);
+        taskManager.write(task);
     };
 
     public void sendResult(String res) {

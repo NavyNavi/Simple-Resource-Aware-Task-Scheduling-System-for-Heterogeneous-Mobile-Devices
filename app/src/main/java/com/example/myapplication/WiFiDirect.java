@@ -81,6 +81,9 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
     private Notification mNotification;
     private NotificationManager mNotificationManager;
 
+    public static final int MESSAGE_READ = 0x400 + 1;
+    public static final int MY_HANDLE = 0x400 + 2;
+
     private void exqListener() {
         btnOnOff.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,7 +161,7 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
                     index++;
                 }
 
-                ArrayAdapter<String> adapter=new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,deviceNameArray);
+                ArrayAdapter<String> adapter=new ArrayAdapter<String>(getApplicationContext(),R.layout.list_item, R.id.list_item, deviceNameArray);
                 listView.setAdapter(adapter);
             }
 
@@ -184,12 +187,12 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
     public boolean handleMessage(Message msg){
         Log.d("handler", "Firing handler callback.");
         switch (msg.what) {
-            case (0x400 + 1):
+            case MESSAGE_READ:
                 byte[] readBuf = (byte[]) msg.obj;
                 String readMessage = new String(readBuf, 0, msg.arg1);
                 Log.d("WifiDirect", readMessage);
                 break;
-            case(0x400 + 2):
+            case MY_HANDLE:
                 Object obj = msg.obj;
                 MainActivity.setChatManager((TaskManager) obj);
         }

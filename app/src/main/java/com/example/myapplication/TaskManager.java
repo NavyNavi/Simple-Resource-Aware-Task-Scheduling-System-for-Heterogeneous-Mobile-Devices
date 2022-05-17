@@ -35,7 +35,7 @@ public class TaskManager implements Runnable {
             oStream = socket.getOutputStream();
             byte[] buffer = new byte[1024];
             int bytes;
-            handler.obtainMessage((0x400 + 1), this)
+            handler.obtainMessage(WiFiDirect.MY_HANDLE, this)
                     .sendToTarget();
 
             while (true) {
@@ -48,7 +48,7 @@ public class TaskManager implements Runnable {
 
                     // Send the obtained bytes to the UI Activity
                     Log.d(TAG, "Rec:" + String.valueOf(buffer));
-                    handler.obtainMessage((0x400 + 2),
+                    handler.obtainMessage(WiFiDirect.MESSAGE_READ,
                             bytes, -1, buffer).sendToTarget();
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
