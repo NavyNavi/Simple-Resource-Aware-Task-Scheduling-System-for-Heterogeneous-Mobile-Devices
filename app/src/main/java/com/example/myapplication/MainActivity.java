@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.google.android.material.textfield.TextInputEditText;
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setSerializedTask(String task, int workerId){
         Log.d("MainActiity", "sending task.");
-        taskManager.write(task);
+        //taskManager.write(task);
     };
 
     public void sendResult(String res) {

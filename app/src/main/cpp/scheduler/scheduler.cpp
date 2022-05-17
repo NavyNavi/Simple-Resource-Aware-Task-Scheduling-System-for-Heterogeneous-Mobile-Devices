@@ -39,6 +39,7 @@ std::string Scheduler::startScheduler(JNIEnv* env, jobject jObj) {
     std::list<TaskNode*> ready_node = start_node->commit();
     pending_node.merge(ready_node);
     assign();
+    return "";
 }
 
 void Scheduler::assign() {

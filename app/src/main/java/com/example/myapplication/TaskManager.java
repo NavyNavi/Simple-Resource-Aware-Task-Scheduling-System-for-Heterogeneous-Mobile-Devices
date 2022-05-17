@@ -18,6 +18,7 @@ public class TaskManager implements Runnable {
     private Handler handler;
 
     public TaskManager(Socket socket, Handler handler) {
+        Log.d(TAG, "initializing.");
         this.socket = socket;
         this.handler = handler;
     }
