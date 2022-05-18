@@ -83,6 +83,6 @@ std::list<TaskNode*> TaskNode::commit() {
 std::string TaskNode::serialize() {
     ALOG("Task node: serializing.");
     std::ostringstream ss;
-    ss << id << "," << funcId << "," << args; //<< start_time;
+    ss << id << " " << funcId << " " << args; //<< start_time;
     return ss.str();
 }

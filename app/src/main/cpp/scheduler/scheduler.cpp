@@ -78,7 +78,7 @@ void Scheduler::sendTask(std::string task, int worker) {
     ALOG("scheduler: env is %p", env);
     jstring jTask = env->NewStringUTF((task).c_str());
     jclass taskClass = env->FindClass("com/example/myapplication/MainActivity");
-    jmethodID methodId = env->GetMethodID(taskClass, "setSerializedTask", "(Ljava/lang/String;I)V");
+    jmethodID methodId = env->GetMethodID(taskClass, "sendSerializedTask", "(Ljava/lang/String;I)V");
     env->CallVoidMethod(jObj, methodId, jTask, worker);
 }
 

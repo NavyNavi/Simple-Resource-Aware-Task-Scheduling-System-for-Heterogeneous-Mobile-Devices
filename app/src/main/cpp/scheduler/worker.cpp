@@ -15,7 +15,8 @@ void Worker::setEnv(JNIEnv *env, jobject jObj) {
 
 void Worker::queueTask(std::string task) {
     ALOG("Worker queue task.");
-    std::future<void> future = std::async(std::launch::async, &Worker::exeTasks, this, task);
+    //std::future<void> future = std::async(std::launch::async, &Worker::exeTasks, this, task);
+    exeTasks(task);
 }
 
 void Worker::exeTasks(std::string task) {
@@ -24,18 +25,20 @@ void Worker::exeTasks(std::string task) {
     std::copy( std::istream_iterator<std::string>(strstr),
                std::istream_iterator<std::string>(),
                std::back_inserter(tokens) );
+    ALOG("deserialized.");
 
     int func_id = std::stoi(tokens[1]);
     int args = std::stoi(tokens[2]);
     std::string start_time = tokens[3];
+    ALOG("no overflow.");
 
     int (*fun_ptr)() = funcMap[func_id];
     int res = fun_ptr();
-    std::string serialized_res = tokens[0] + std::to_string(worker_id) + std::to_string(res);
+    std::string serialized_res = tokens[0] + " " + std::to_string(worker_id) + " " + std::to_string(res);
     ALOG("Worker execution result : %d.", res);
 
     jstring jRes = env->NewStringUTF((serialized_res).c_str());
-    jclass taskClass = env->FindClass("com/example/myapplication/MainActivity");
+    jclass taskClass = env->FindClass("com/example/myapplication/WiFiDirect");
     jmethodID methodId = env->GetMethodID(taskClass, "sendResult", "(Ljava/lang/String;)V");
     env->CallVoidMethod(jObj, methodId, jRes);
 }

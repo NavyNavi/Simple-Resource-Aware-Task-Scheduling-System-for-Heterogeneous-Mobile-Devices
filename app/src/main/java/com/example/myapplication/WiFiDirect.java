@@ -65,7 +65,7 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
     BroadcastReceiver mReceiver;
     IntentFilter mIntentFilter;
 
-    List<WifiP2pDevice> peers=new ArrayList<WifiP2pDevice>();
+    List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
     String[] deviceNameArray;
     WifiP2pDevice[] deviceArray;
     Map<Integer, InetAddress> worker2Ip;
@@ -73,13 +73,8 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
 
     String paringSSID;
     private byte[] SerializedTask;
-    public static boolean transactionDone=false;
-
-    //for notification handling
-    private Context mContext;
-    private int NOTIFICATION_ID = 1;
-    private Notification mNotification;
-    private NotificationManager mNotificationManager;
+    public static boolean transactionDone = false;
+    private static TaskManager taskManager;
 
     public static final int MESSAGE_READ = 0x400 + 1;
     public static final int MY_HANDLE = 0x400 + 2;
@@ -88,18 +83,16 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
         btnOnOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(wifiManager.isWifiEnabled())
-                {
+                if (wifiManager.isWifiEnabled()) {
                     wifiManager.setWifiEnabled(false);
                     btnOnOff.setText("ON");
-                }else {
+                } else {
                     wifiManager.setWifiEnabled(true);
                     btnOnOff.setText("OFF");
                 }
             }
         });
 
-        //not exist
         btnDiscover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,14 +118,14 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
         });
 
         //automate WiFi enabling and discovery
-        if(!wifiManager.isWifiEnabled()){
+        if (!wifiManager.isWifiEnabled()) {
             btnOnOff.callOnClick();
         }
         btnDiscover.callOnClick();
     }
 
     private void checkLocationPermission() {
-        Log.d("WifiDirect","checking location permission.");
+        Log.d("WifiDirect", "checking location permission.");
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             Toast.makeText(this, "please enable location services for this app.", Toast.LENGTH_LONG).show();
@@ -140,43 +133,50 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
         }
     }
 
-    WifiP2pManager.PeerListListener peerListListener=new WifiP2pManager.PeerListListener() {
+    public void setChatManager(TaskManager manager) {
+        Log.d("WifiDirect", "received handler.");
+        taskManager = manager;
+    }
+
+    public void sendResult(String res) {
+        Log.d("WifiDirect", "sending result.");
+        taskManager.write(res);
+    }
+
+    WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener() {
         @Override
         public void onPeersAvailable(WifiP2pDeviceList peerList) {
-            if(!peerList.getDeviceList().equals(peers))
-            {
+            if (!peerList.getDeviceList().equals(peers)) {
                 //TODO: check any more efficient method Collection=>list
                 peers.clear();
                 peers.addAll(peerList.getDeviceList());
 
-                deviceNameArray=new String[peerList.getDeviceList().size()];
-                deviceArray=new WifiP2pDevice[peerList.getDeviceList().size()];
-                int index=0;
+                deviceNameArray = new String[peerList.getDeviceList().size()];
+                deviceArray = new WifiP2pDevice[peerList.getDeviceList().size()];
+                int index = 0;
 
-                for(WifiP2pDevice device : peerList.getDeviceList())
-                {
-                    Log.d("WifiDirect", String.format("Found device %d",index));
-                    deviceNameArray[index]=device.deviceName;
-                    deviceArray[index]=device;
+                for (WifiP2pDevice device : peerList.getDeviceList()) {
+                    Log.d("WifiDirect", String.format("Found device %d", index));
+                    deviceNameArray[index] = device.deviceName;
+                    deviceArray[index] = device;
                     index++;
                 }
 
-                ArrayAdapter<String> adapter=new ArrayAdapter<String>(getApplicationContext(),R.layout.list_item, R.id.list_item, deviceNameArray);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.list_item, R.id.list_item, deviceNameArray);
                 listView.setAdapter(adapter);
             }
 
-            if(peers.size()==0)
-            {
-                Toast.makeText(getApplicationContext(),"No Device Found",Toast.LENGTH_SHORT).show();
+            if (peers.size() == 0) {
+                Toast.makeText(getApplicationContext(), "No Device Found", Toast.LENGTH_SHORT).show();
                 return;
-            }else {
-                if (!transactionDone){ //&& CloudFileScreen.hasRequested){
+            } else {
+                if (!transactionDone) { //&& CloudFileScreen.hasRequested){
                     try {
-                        WifiP2pDevice device=fetchSecondDevice(deviceArray,paringSSID);
-                        transactionDone=true;
+                        WifiP2pDevice device = fetchSecondDevice(deviceArray, paringSSID);
+                        transactionDone = true;
                         connectTo(device);
-                    }catch (IOException e){
-                        Toast.makeText(getApplicationContext(),"2nd Device Not Found",Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        Toast.makeText(getApplicationContext(), "2nd Device Not Found", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -184,16 +184,18 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
     };
 
     @Override
-    public boolean handleMessage(Message msg){
+    public boolean handleMessage(Message msg) {
         Log.d("handler", "Firing handler callback.");
         switch (msg.what) {
             case MESSAGE_READ:
                 byte[] readBuf = (byte[]) msg.obj;
                 String readMessage = new String(readBuf, 0, msg.arg1);
-                Log.d("WifiDirect", readMessage);
+                Log.d("handler", readMessage);
+                executeTask(readMessage);
                 break;
             case MY_HANDLE:
                 Object obj = msg.obj;
+                setChatManager((TaskManager) obj);
                 MainActivity.setChatManager((TaskManager) obj);
         }
         return true;
@@ -305,4 +307,6 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
         }
         throw new IOException("Device not found");
     }
+
+    public native void executeTask(String serializedTask);
 }

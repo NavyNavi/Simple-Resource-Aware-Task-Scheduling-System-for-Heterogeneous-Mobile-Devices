@@ -36,15 +36,10 @@ public class MainActivity extends AppCompatActivity {
         taskManager = manager;
     }
 
-    public void setSerializedTask(String task, int workerId){
+    public void sendSerializedTask(String task, int workerId){
         Log.d("MainActiity", "sending task.");
         taskManager.write(task);
     };
-
-    public void sendResult(String res) {
-        Log.d("MainActivity", "sending result.");
-        taskManager.write(res);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +68,5 @@ public class MainActivity extends AppCompatActivity {
      * which is packaged with this application.
      */
     public native String startScheduler(int testcase);
-    public native void executeTask(String serializedTask);
     public native void receiveCompletedTask(String serializedTask);
 }

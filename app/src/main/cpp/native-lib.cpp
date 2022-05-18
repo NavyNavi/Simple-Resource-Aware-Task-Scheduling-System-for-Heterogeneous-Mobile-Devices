@@ -24,7 +24,7 @@ Java_com_example_myapplication_MainActivity_startScheduler(JNIEnv* env, jobject 
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_example_myapplication_MainActivity_executeTask(JNIEnv* env, jobject jObj, jstring serializedTask) {
+Java_com_example_myapplication_WiFiDirect_executeTask(JNIEnv* env, jobject jObj, jstring serializedTask) {
     jboolean isCopy;
     size_t length = env->GetStringLength(serializedTask);
     const char* cpp_char = env->GetStringUTFChars(serializedTask, &isCopy);
