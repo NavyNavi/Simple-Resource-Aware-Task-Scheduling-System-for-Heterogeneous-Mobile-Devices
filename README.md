@@ -27,6 +27,10 @@ is the offloadee that executes the assigned tasks.
 #### WiFiDirect
 A peer-to-peer way to communicate with mobile devices. It is choosen for its suport for connecting to large number of devices. This eliminates the need of hops, and speeds up the communication between devices.
 
+## Use of Native Code
+To maximize the performance of the scheduler, it is implemented with native code (C++). Only the UI and network interface is in Java. The following diagram shows how the Java code interacts with the native code.
+![JNI's structure](./media/JNIMap.png)
+
 ## Run application
 To run the applicaiton, 
 1. connect mobile devices to a computer. 
