@@ -6,7 +6,7 @@
 enum testcases{wifi_communication, matrix_mul};
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_myapplication_MainActivity_startScheduler(JNIEnv* env, jobject jObj, int testcase) {
+Java_com_example_myapplication_WiFiDirect_startScheduler(JNIEnv* env, jobject jObj, int testcase) {
     std::string res;
     switch (testcase) {
         case wifi_communication:
@@ -36,7 +36,7 @@ Java_com_example_myapplication_WiFiDirect_executeTask(JNIEnv* env, jobject jObj,
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_example_myapplication_MainActivity_receiveCompletedTask(JNIEnv* env, jobject jObj, jstring serializedTask) {
+Java_com_example_myapplication_WiFiDirect_receiveCompletedTask(JNIEnv* env, jobject jObj, jstring serializedTask) {
     jboolean isCopy;
     size_t length = env->GetStringLength(serializedTask);
     const char* cpp_char = env->GetStringUTFChars(serializedTask, &isCopy);
