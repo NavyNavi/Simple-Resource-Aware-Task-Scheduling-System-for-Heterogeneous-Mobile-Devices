@@ -30,8 +30,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 //import static com.fyp.d2d_android.MyFirebaseMessagingService.msgFlag;
 @SuppressLint("MissingPermission")
@@ -52,12 +54,11 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
     List<WifiP2pDevice> peers = new ArrayList<>();
     String[] deviceNameArray;
     WifiP2pDevice[] deviceArray;
-    Map<Integer, InetAddress> worker2Ip;
+    Map<Integer, TaskManager> worker2taskManager = new HashMap<>();
     private final Handler handler = new Handler(Looper.getMainLooper(), this);
 
     String paringSSID;
     public static boolean transactionDone = false;
-    private static TaskManager taskManager;
 
     private final String TAG = "WifiDirect";
     private enum testcases {wifi_communication, matrix_mul}
@@ -69,23 +70,19 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
     public native String startScheduler(int testcase);
     public native void executeTask(String serializedTask);
     public native void receiveCompletedTask(String serializedTask);
+    public native int registerWorker();
 
     public void sendSerializedTask(String task, int workerId){
         Log.d(TAG, "sending task.");
-        taskManager.write(task);
+        Objects.requireNonNull(worker2taskManager.get(workerId)).write(task);
     }
 
     public void sendResult(String res) {
-        Log.d("WifiDirect", "sending result.");
-        taskManager.write(res);
+        Log.d(TAG, "sending result.");
+        Objects.requireNonNull(worker2taskManager.get(0)).write(res);
     }
 
     //network interface
-    public void setChatManager(TaskManager manager) {
-        Log.d("WifiDirect", "received handler.");
-        taskManager = manager;
-    }
-
     WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener() {
         @Override
         public void onPeersAvailable(WifiP2pDeviceList peerList) {
@@ -99,7 +96,6 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
                 int index = 0;
 
                 for (WifiP2pDevice device : peerList.getDeviceList()) {
-                    Log.d("WifiDirect", String.format("Found device %d", index));
                     deviceNameArray[index] = device.deviceName;
                     deviceArray[index] = device;
                     index++;
@@ -111,15 +107,13 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
 
             if (peers.size() == 0) {
                 Toast.makeText(getApplicationContext(), "No Device Found", Toast.LENGTH_SHORT).show();
-                return;
             } else {
                 if (!transactionDone) { //&& CloudFileScreen.hasRequested){
                     try {
                         WifiP2pDevice device = fetchSecondDevice(deviceArray, paringSSID);
                         transactionDone = true;
                         connectTo(device);
-                    } catch (IOException e) {
-                        Toast.makeText(getApplicationContext(), "2nd Device Not Found", Toast.LENGTH_SHORT).show();
+                    } catch (IOException ignored) {
                     }
                 }
             }
@@ -134,10 +128,16 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
                 byte[] readBuf = (byte[]) msg.obj;
                 String readMessage = new String(readBuf, 0, msg.arg1);
                 Log.d("handler", readMessage);
-                executeTask(readMessage);
+                if (readMessage.charAt(0) == '0') { //received task
+                    executeTask(readMessage.substring(2));
+                } else { //received result
+                    receiveCompletedTask(readMessage.substring(2));
+                }
                 break;
             case MY_HANDLE:
-                setChatManager((TaskManager) msg.obj);
+                int newId = registerWorker();
+                worker2taskManager.put(newId, (TaskManager) msg.obj);
+
         }
         return true;
     }
@@ -148,7 +148,6 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
 
     @Override
     public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
-        Log.d(TAG,"connection info available.");
         final InetAddress groupOwnerAddress=wifiP2pInfo.groupOwnerAddress;
         Thread handler;
 
@@ -161,7 +160,6 @@ public class WiFiDirect extends AppCompatActivity implements MessageTarget, Wifi
                 handler.start();
             } catch (IOException e) {
                 Log.d(TAG, "Failed to create a server thread");
-                return;
             }
         }else if(wifiP2pInfo.groupFormed)
         {

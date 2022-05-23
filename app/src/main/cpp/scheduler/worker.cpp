@@ -34,7 +34,8 @@ void Worker::exeTasks(std::string task) {
 
     int (*fun_ptr)() = funcMap[func_id];
     int res = fun_ptr();
-    std::string serialized_res = tokens[0] + " " + std::to_string(worker_id) + " " + std::to_string(res);
+    //finished || node id || worker id || start time
+    std::string serialized_res = "1 " + tokens[0] + " " + std::to_string(worker_id) + " " + std::to_string(res);
     ALOG("Worker execution result : %d.", res);
 
     jstring jRes = env->NewStringUTF((serialized_res).c_str());

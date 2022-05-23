@@ -7,7 +7,7 @@
 #include "DAG/task-node.h"
 #include "worker.cpp"
 #include "scheduler.h"
-#include "profiler.cpp"
+#include "profiler.h"
 
 Scheduler::~Scheduler() {
     ALOG("scheduler: dtor.");
@@ -18,9 +18,9 @@ Scheduler::~Scheduler() {
 }
 
 TaskNode * Scheduler::addNode(int funcId, TaskNode *prev_node) {
-    ALOG("Add node.");
     TaskNode* new_node = new TaskNode(funcId, 1, idCounter);
     id2address[idCounter] = new_node;
+    ALOG("Add node %d: %p.", idCounter, new_node);
     idCounter++;
     if (prev_node) {
         prev_node->addNextNode(new_node);
@@ -68,7 +68,7 @@ void Scheduler::assign() {
         std::string task = node->serialize();
         profiler.useWorker(worker);
         //timeout for recovery
-        sendTask(task, worker);
+        //sendTask(task, worker);
         pending_node.pop_front();
     }
 }
@@ -83,8 +83,12 @@ void Scheduler::sendTask(std::string task, int worker) {
 }
 
 void Scheduler::commitNode(int id) {
-    ALOG("scheduler: node completed.");
+    ALOG("scheduler: node completed %d.", id);
     std::list<TaskNode*> ready_node = id2address[id]->commit();
-    pending_node.merge(ready_node);
+    if(!ready_node.empty()) {
+        for (auto node : ready_node) {
+            pending_node.push_back(node);
+        }
+    }
     if(!assigning) { assign(); }
 }

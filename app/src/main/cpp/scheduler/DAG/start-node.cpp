@@ -54,5 +54,6 @@ std::list<TaskNode*> StartNode::commit() {
             ready_node.push_back(edge);
         }
     }
+    ready_node.sort();
     return ready_node;
 }

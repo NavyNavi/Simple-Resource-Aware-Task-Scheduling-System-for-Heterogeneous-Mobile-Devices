@@ -73,16 +73,18 @@ std::list<TaskNode*> TaskNode::commit() {
     if(next_nodes.empty()) { return ready_node; }
     for (TaskNode *edge : next_nodes) {
         edge->dependency--;
-        if (edge->dependency == 0) {
+        if (edge->dependency <= 0) {
             ready_node.push_back(edge);
         }
     }
+    ready_node.sort();
     return ready_node;
 }
 
 std::string TaskNode::serialize() {
     ALOG("Task node: serializing.");
     std::ostringstream ss;
-    ss << id << " " << funcId << " " << args; //<< start_time;
+    //finished || node id || function id || arguments || start time
+    ss << "0 " << id << " " << funcId << " " << args; //<< start_time;
     return ss.str();
 }

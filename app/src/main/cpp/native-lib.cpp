@@ -23,6 +23,12 @@ Java_com_example_myapplication_WiFiDirect_startScheduler(JNIEnv* env, jobject jO
     return env->NewStringUTF(res.c_str());
 }
 
+extern "C" JNIEXPORT int JNICALL
+Java_com_example_myapplication_WiFiDirect_registerWorker(JNIEnv* env, jobject jObj) {
+    Profiler& profiler = Profiler::getInstance();
+    return profiler.addWorker();
+}
+
 extern "C" JNIEXPORT void JNICALL
 Java_com_example_myapplication_WiFiDirect_executeTask(JNIEnv* env, jobject jObj, jstring serializedTask) {
     jboolean isCopy;
