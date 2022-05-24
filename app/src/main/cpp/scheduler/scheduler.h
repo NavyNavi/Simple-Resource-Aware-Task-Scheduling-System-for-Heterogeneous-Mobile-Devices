@@ -15,6 +15,7 @@ class Scheduler {
         //how to make sure its started?
         std::string startScheduler(JNIEnv* env, jobject jObj);
         void commitNode(int id);
+        void updateEnv(JNIEnv* env, jobject jObj);
 
     private:
         Scheduler() {}

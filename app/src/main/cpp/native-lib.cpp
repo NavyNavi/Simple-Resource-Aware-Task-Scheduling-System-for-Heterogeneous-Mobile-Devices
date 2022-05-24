@@ -49,5 +49,7 @@ Java_com_example_myapplication_WiFiDirect_receiveCompletedTask(JNIEnv* env, jobj
     std::string cpp_string = std::string(cpp_char, length);
 
     Profiler& profiler = Profiler::getInstance();
+    Scheduler& scheduler = Scheduler::getInstance();
+    scheduler.updateEnv(env, jObj);
     profiler.updateData(cpp_string);
 }

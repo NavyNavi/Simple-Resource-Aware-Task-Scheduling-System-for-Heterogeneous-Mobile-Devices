@@ -32,8 +32,7 @@ TaskNode * Scheduler::addNode(int funcId, TaskNode *prev_node) {
 
 std::string Scheduler::startScheduler(JNIEnv* env, jobject jObj) {
     ALOG("scheduler: initializing.");
-    this->env = env;
-    this->jObj = jObj;
+    updateEnv(env, jObj);
     currCrit = start_node->setCriticality();
     start_node->findCriticalNodes();
     std::list<TaskNode*> ready_node = start_node->commit();
@@ -68,7 +67,7 @@ void Scheduler::assign() {
         std::string task = node->serialize();
         profiler.useWorker(worker);
         //timeout for recovery
-        //sendTask(task, worker);
+        sendTask(task, worker);
         pending_node.pop_front();
     }
 }
@@ -91,4 +90,9 @@ void Scheduler::commitNode(int id) {
         }
     }
     if(!assigning) { assign(); }
+}
+
+void Scheduler::updateEnv(JNIEnv *env, jobject jObj) {
+    this->env = env;
+    this->jObj = jObj;
 }
